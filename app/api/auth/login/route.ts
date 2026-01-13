@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
 import User from "@/models/User";
 import dbConnect from "@/lib/mongodb";
 import { LoginFormData, loginSchema } from "@/shared/schemas/loginSchema";
@@ -28,16 +29,20 @@ export const POST = handleApiErrors(async function (req: NextRequest) {
 
     await user.populate("role");
 
-    const response = NextResponse.json({
-        message: "User logged in successfully",
-        user: getSafeUser(user),
-    });
-
     const tokens = {
         accessToken: user.generateAccessToken(),
         refreshToken: await user.generateRefreshToken(),
     };
-    await setAccessAndRefreshTokens(response, tokens);
+
+    const csrfToken = crypto.randomBytes(32).toString("hex");
+
+    const response = NextResponse.json({
+        message: "User logged in successfully",
+        user: getSafeUser(user),
+        csrfToken,
+    });
+
+    await setAccessAndRefreshTokens(response, tokens, csrfToken);
 
     return response;
 

@@ -7,8 +7,8 @@ import { setAccessAndRefreshTokens } from "@/utils/setAccessAndRefreshTokens";
 import { validateRequest } from "@/utils/validateRequest";
 import { RegisterBackendData } from "@/shared/schemas/registerUserSchema";
 import { handleApiErrors } from "@/utils/handleApiErrors";
-import bcrypt from "bcryptjs";
 import Role from "@/models/Roles";
+import crypto from "crypto";
 
 export const POST = handleApiErrors(async function (req: NextRequest) {
   await dbConnect();
@@ -40,16 +40,21 @@ export const POST = handleApiErrors(async function (req: NextRequest) {
 
   await user.populate("role");
 
-  const response = NextResponse.json({
-    message: "User registered successfully",
-    user: getSafeUser(user),
-  });
 
   const tokens = {
     accessToken: user.generateAccessToken(),
     refreshToken: await user.generateRefreshToken(),
   };
-  await setAccessAndRefreshTokens(response, tokens);
+  const csrfToken = crypto.randomBytes(32).toString("hex");
+
+  const response = NextResponse.json({
+    message: "User registered successfully",
+    user: getSafeUser(user),
+    csrfToken,
+  });
+
+
+  await setAccessAndRefreshTokens(response, tokens, csrfToken);
 
   return response;
 });

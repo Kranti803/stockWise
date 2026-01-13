@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
+import crypto from "crypto";
 
-export const setAccessAndRefreshTokens = async (response: NextResponse, tokens: { accessToken: string, refreshToken: string }) => {
+export const setAccessAndRefreshTokens = async (response: NextResponse, tokens: { accessToken: string, refreshToken: string }, providedCsrfToken?: string) => {
     const { accessToken, refreshToken } = tokens;
 
     response.cookies.set("accessToken", accessToken, {
@@ -16,5 +17,15 @@ export const setAccessAndRefreshTokens = async (response: NextResponse, tokens: 
         sameSite: "lax",
         maxAge: Number(process.env.JWT_REFRESH_EXPIRY),
     });
+
+    const csrfToken = crypto.randomBytes(32).toString("hex");
+
+    response.cookies.set("csrfToken", csrfToken, {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: Number(process.env.JWT_EXPIRY),
+    });
+    return csrfToken;
 
 };

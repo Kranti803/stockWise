@@ -29,6 +29,7 @@ export const POST = handleApiErrors(async function (req: NextRequest) {
 
     response.cookies.set("refreshToken", "", { maxAge: 0, httpOnly: true });
     response.cookies.set("accessToken", "", { maxAge: 0, httpOnly: true });
+    response.cookies.set("csrfToken", "", { maxAge: 0, httpOnly: false });
 
     return response;
 
