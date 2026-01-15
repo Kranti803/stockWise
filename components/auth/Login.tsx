@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import Logo from "@/assets/LogoNew.png";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
@@ -7,10 +8,10 @@ import { Label } from "@radix-ui/react-label";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
-import { useLogin } from "@/hooks/useAPI";
-import { loginSchema } from "@/shared/schemas/loginSchema";
+import { loginSchema } from "@/schemas/loginSchema";
 import { ZodError } from "zod";
 import { parseZodErrors } from "@/utils/parseZodErrors";
+import { useLogin } from "@/services/authenticateUser";
 
 const Login: React.FC = () => {
   const [passwordType, setPasswordType] = useState("password");
@@ -18,6 +19,8 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { mutate: login, isPending } = useLogin();
+
+  const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,16 +39,13 @@ const Login: React.FC = () => {
             setEmail("");
             setPassword("");
             setErrors({});
+            router.push("/");
           },
         }
       );
     } catch (error) {
-      if (error instanceof ZodError) {
-        const fieldErrors = parseZodErrors(error);
-        setErrors(fieldErrors);
-      } else {
-        console.log(error);
-      }
+      const fieldErrors = parseZodErrors(error);
+      setErrors(fieldErrors); 
     }
   };
 

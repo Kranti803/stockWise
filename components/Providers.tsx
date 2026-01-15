@@ -10,7 +10,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     // <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <ReactQueryProvider>
         {children}
-        <Toaster />
+        <Toaster position="bottom-right" richColors />
       </ReactQueryProvider>
     // </ThemeProvider>
   )

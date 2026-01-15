@@ -4,7 +4,7 @@ import dbConnect from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 import Role from "@/models/Roles";
 import { validateRequest } from "@/utils/validateRequest";
-import { RoleSchema, roleSchema } from "@/shared/schemas/roleSchema";
+import { RoleSchema, roleSchema } from "@/schemas/roleSchema";
 //get all roles
 export const GET = handleApiErrors(async function (req: NextRequest) {
     await dbConnect();

@@ -7,10 +7,10 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import Image from "next/image";
 import Logo from "@/assets/LogoNew.png";
-import { useRegister } from "@/hooks/useAPI";
-import { registerFormSchema } from "@/shared/schemas/registerUserSchema";
+import { registerFormSchema } from "@/schemas/registerUserSchema";
 import { ZodError } from "zod";
 import { parseZodErrors } from "@/utils/parseZodErrors";
+import { useRegister } from "@/services/authenticateUser";
 
 const Register: React.FC = () => {
   const [passwordType, setPasswordType] = useState("password");
@@ -52,13 +52,8 @@ const Register: React.FC = () => {
         }
       );
     } catch (error) {
-      if (error instanceof ZodError) {
-        const fieldErrors = parseZodErrors(error);
-        setErrors(fieldErrors); // show errors under each field
-      } else {
-        // handle other unexpected errors
-        console.error(error);
-      }
+      const fieldErrors = parseZodErrors(error);
+      setErrors(fieldErrors); // show errors under each field
     }
   };
 

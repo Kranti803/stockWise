@@ -57,7 +57,6 @@ UserSchema.pre<IUserDocument>("save", async function () {
 
 // custom Methods
 UserSchema.methods.comparePassword = function (password: string) {
-  console.log(password, this.password)
   return bcrypt.compare(password, this.password);
 };
 
@@ -73,13 +72,6 @@ UserSchema.methods.removeRefreshToken = async function (token: string) {
   ) as any;
   await this.save();
 };
-
-//dont actually  need it right now
-
-// UserSchema.methods.hasRefreshToken = function (token: string) {
-//   const tokens = this.refreshTokens as unknown as RefreshToken[];
-//   return tokens.some((t: RefreshToken) => t.token === token);
-// };
 
 //jwt.sign is synchronous(no need to be async function)
 UserSchema.methods.generateAccessToken = function () {

@@ -18,7 +18,7 @@ export const setAccessAndRefreshTokens = async (response: NextResponse, tokens: 
         maxAge: Number(process.env.JWT_REFRESH_EXPIRY),
     });
 
-    const csrfToken = crypto.randomBytes(32).toString("hex");
+    const csrfToken = providedCsrfToken || crypto.randomBytes(32).toString("hex");
 
     response.cookies.set("csrfToken", csrfToken, {
         httpOnly: false,
